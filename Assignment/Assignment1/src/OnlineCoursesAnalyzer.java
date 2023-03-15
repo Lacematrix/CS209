@@ -68,12 +68,103 @@ public class OnlineCoursesAnalyzer {
 
     //3
     public Map<String, List<List<String>>> getCourseListOfInstructor() {
-        return null;
+        Stream<Course> courseStream = courses.stream();
+        Map<String, List<List<String>>> Q3 = new TreeMap<>();
+        Map<String, List<Course>> temp;
+        List<String> teacher = new ArrayList<>();
+        temp = courseStream.collect(Collectors.groupingBy(Course::getInstructors,Collectors.toList()));
+        temp.forEach((s, courses1) -> {
+                String[] k;
+                k = s.split(", ");
+                Arrays.stream(k).forEach(s1 -> {
+                    if (!teacher.contains(s1)) {
+                        List<List<String>> list = new ArrayList<>();
+                        List<String> t0 = new ArrayList<>();
+                        List<String> t1 = new ArrayList<>();
+                        list.add(t0);
+                        list.add(t1);
+                        Q3.put(s1, list);
+                        teacher.add(s1);
+                    }
+                });
+            }
+        );
+        temp.forEach(((s, courses1) -> {
+            String[] k = s.split(", ");
+            if (k.length == 1){
+                List<List<String>> co = Q3.get(k[0]);
+                courses1.forEach(course -> {
+                    if (!co.get(0).contains(course.getTitle())) {
+                        co.get(0).add(course.getTitle());
+                    }
+                });
+                Q3.put(k[0], co);
+            }else {
+                for (int i = 0; i < k.length; i++) {
+                    List<List<String>> co1 = Q3.get(k[i]);
+                    courses1.forEach(course -> {
+                        if (!co1.get(1).contains(course.getTitle())) {
+                            co1.get(1).add(course.getTitle());
+                        }
+                    });
+                    Q3.put(k[i], co1);
+                }
+            }
+        }));
+        Q3.forEach((s, lists) ->{
+
+            for (int i = 0; i < lists.size(); i++) {
+                lists.get(i).sort(new Comparator<String>() {
+                    @Override
+                    public int compare(String o1, String o2) {
+                        return o1.compareTo(o2);
+                    }
+                });
+            }
+        });
+        return Q3;
     }
 
     //4
     public List<String> getCourses(int topK, String by) {
-        return null;
+        Stream<Course> courseStream = courses.stream();
+        if (by.equals("hours")) {
+            Map<String, List<Course>> courseEach = courseStream.collect(
+                Collectors.groupingBy(Course::getTitle,
+                    Collectors.toList()));
+            Map<String, Double> Q4_1 = new TreeMap<>();
+            courseEach = new TreeMap<>(courseEach);
+            courseEach.forEach((s, courses1) -> {
+                courses1.sort(Comparator.comparing(Course::getTotalHours).reversed());
+                Q4_1.put(s, courses1.get(0).getTotalHours());
+            });
+            List<Map.Entry<String, Double>> list = new ArrayList<Map.Entry<String, Double>>(
+                Q4_1.entrySet());
+            List<String> Q4_1L = new ArrayList<>();
+            Collections.sort(list, (o1, o2) -> o2.getValue().compareTo(o1.getValue()));
+            for (int i = 0; i < topK; i++) {
+                Q4_1L.add(list.get(i).getKey());
+            }
+            return Q4_1L;
+        }else {
+            Map<String, List<Course>> courseEach = courseStream.collect(
+                Collectors.groupingBy(Course::getTitle,
+                    Collectors.toList()));
+            Map<String, Integer> Q4_1 = new TreeMap<>();
+            courseEach = new TreeMap<>(courseEach);
+            courseEach.forEach((s, courses1) -> {
+                courses1.sort(Comparator.comparing(Course::getParticipants).reversed());
+                Q4_1.put(s, courses1.get(0).getParticipants());
+            });
+            List<Map.Entry<String, Integer>> list = new ArrayList<Map.Entry<String, Integer>>(
+                Q4_1.entrySet());
+            List<String> Q4_1L = new ArrayList<>();
+            Collections.sort(list, (o1, o2) -> o2.getValue().compareTo(o1.getValue()));
+            for (int i = 0; i < topK; i++) {
+                Q4_1L.add(list.get(i).getKey());
+            }
+            return Q4_1L;
+        }
     }
 
     //5
@@ -164,4 +255,18 @@ class Course {
     public String getICS(){
         return String.format("%s-%s",institution, subject);
     }
+
+    public String getInstructors() {
+        return instructors;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public double getTotalHours() {
+        return totalHours;
+    }
+
+
 }
