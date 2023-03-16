@@ -3,6 +3,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
+import java.util.Map.Entry;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -169,12 +170,72 @@ public class OnlineCoursesAnalyzer {
 
     //5
     public List<String> searchCourses(String courseSubject, double percentAudited, double totalCourseHours) {
-        return null;
+        Stream<Course> courseStream = courses.stream();
+        Map<String, List<Course>> courseTemp = courseStream.filter(course -> course.getPercentAudited() >= percentAudited).filter(course -> course.totalHours <= totalCourseHours).collect(Collectors.groupingBy(Course::getSubject, Collectors.toList()));
+        List<String> course = new ArrayList<>();
+        courseTemp.forEach((s, courses1) -> {
+            String[] k = s.split(", ");
+            if (k.length > 1){
+               k[k.length - 1] = k[k.length - 1].replace("and ", "");
+            }
+            for (int i = 0; i < k.length; i++) {
+                String string = k[i].toLowerCase();
+                k[i] = string;
+            }
+            boolean flag = false;
+            for (int i = 0; i < k.length; i++) {
+                if (k[i].contains(courseSubject.toLowerCase())){
+                    flag = true;
+                    break;
+                }
+            }
+            if (flag){
+                courses1.forEach(course1 -> {
+                    if (!course.contains(course1.getTitle())){
+                        course.add(course1.getTitle());
+                    }
+                });
+            }
+        });
+        Collections.sort(course);
+        return course;
     }
 
     //6
     public List<String> recommendCourses(int age, int gender, int isBachelorOrHigher) {
-        return null;
+        Stream<Course> courseStream = courses.stream();
+        Map<String, List<Course>> course = courseStream.collect(Collectors.groupingBy(Course::getNumber, Collectors.toList()));
+        Map<String, Double> Q6_av = new HashMap<>();
+        List<String> Q6 = new ArrayList<>();
+         course.forEach((s, courses1) -> {
+             double avgMA = 0;
+             double avgM = 0;
+             double BDH = 0;
+             for (Course c : courses1) {
+                 avgMA += c.medianAge;
+                 avgM += c.percentMale;
+                 BDH += c.percentDegree;
+             }
+             avgMA /= courses1.size();
+             avgM /= courses1.size();
+             BDH /= courses1.size();
+             double value = (age - avgMA) * (age - avgMA) +
+                 (gender * 100 - avgM) * (gender * 100 - avgM) +
+                 (isBachelorOrHigher * 100 - BDH) * (isBachelorOrHigher * 100 - BDH);
+             courses1.sort(new Comparator<Course>() {
+                 @Override
+                 public int compare(Course o1, Course o2) {
+                     return o2.launchDate.compareTo(o1.launchDate);
+                 }
+             });
+             Q6_av.put(courses1.get(0).title, value);
+        });
+        List<Map.Entry<String,Double>> list = new ArrayList<Map.Entry<String,Double>>(Q6_av.entrySet());
+        Collections.sort(list, Entry.comparingByValue());
+        for (int i = 0; i < 10; i++) {
+            Q6.add(list.get(i).getKey());
+        }
+        return Q6;
     }
 
 }
@@ -266,6 +327,18 @@ class Course {
 
     public double getTotalHours() {
         return totalHours;
+    }
+
+    public String getSubject() {
+        return subject;
+    }
+
+    public double getPercentAudited() {
+        return percentAudited;
+    }
+
+    public String getNumber() {
+        return number;
     }
 
 
