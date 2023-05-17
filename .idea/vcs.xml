@@ -4,6 +4,7 @@
     <mapping directory="" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/Assignment/Assignment2" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/FinalProject/2023-Spring-Java2-Project-Demo" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/FinalProject/StackOverflow" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/FinalProject/project" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/Lab/pokeapi-reactor" vcs="Git" />
   </component>
