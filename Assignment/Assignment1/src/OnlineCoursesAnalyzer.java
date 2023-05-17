@@ -289,26 +289,26 @@ class Course {
     this.institution = institution;
     this.number = number;
     this.launchDate = launchDate;
-      if (title.startsWith("\"")) {
-          title = title.substring(1);
-      }
-      if (title.endsWith("\"")) {
-          title = title.substring(0, title.length() - 1);
-      }
+    if (title.startsWith("\"")) {
+      title = title.substring(1);
+    }
+    if (title.endsWith("\"")) {
+      title = title.substring(0, title.length() - 1);
+    }
     this.title = title;
-      if (instructors.startsWith("\"")) {
-          instructors = instructors.substring(1);
-      }
-      if (instructors.endsWith("\"")) {
-          instructors = instructors.substring(0, instructors.length() - 1);
-      }
+    if (instructors.startsWith("\"")) {
+      instructors = instructors.substring(1);
+    }
+    if (instructors.endsWith("\"")) {
+      instructors = instructors.substring(0, instructors.length() - 1);
+    }
     this.instructors = instructors;
-      if (subject.startsWith("\"")) {
-          subject = subject.substring(1);
-      }
-      if (subject.endsWith("\"")) {
-          subject = subject.substring(0, subject.length() - 1);
-      }
+    if (subject.startsWith("\"")) {
+      subject = subject.substring(1);
+    }
+    if (subject.endsWith("\"")) {
+      subject = subject.substring(0, subject.length() - 1);
+    }
     this.subject = subject;
     this.year = year;
     this.honorCode = honorCode;

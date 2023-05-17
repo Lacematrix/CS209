@@ -2,3 +2,4 @@ list是只读
 泛型只能是引用类型，不能是原始类型
 用objectwrite的时候要把object序列化
 一个socket只能封装一次objectwrite
+在使用IO的时候记得调用flush
